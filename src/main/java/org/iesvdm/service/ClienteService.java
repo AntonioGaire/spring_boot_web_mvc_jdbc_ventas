@@ -1,6 +1,7 @@
 package org.iesvdm.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.iesvdm.dao.ClienteDAO;
 import org.iesvdm.modelo.Cliente;
@@ -24,6 +25,30 @@ public class ClienteService {
 		
 	}
 	
+	public void newCliente(Cliente cliente) {
+		
+		clienteDAO.create(cliente);
 	
+	}
+	
+	public Cliente find(int id) {
+		
+		Optional<Cliente> opCli = clienteDAO.find(id);
+		
+		if(opCli.isPresent()) {
+			return opCli.get();
+		}else {
+			return null;
+		}
+	
+	}
+	
+	public void updateCliente(Cliente cliente) {
+		clienteDAO.update(cliente);
+	}
+	
+	public void deleteCliente(Integer id) {
+		clienteDAO.delete(id);
+	}
 
 }
