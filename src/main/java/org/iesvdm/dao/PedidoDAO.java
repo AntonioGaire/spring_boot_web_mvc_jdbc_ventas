@@ -11,4 +11,7 @@ public interface PedidoDAO {
 	
 	public List<Pedido> getSelectedFromComercial(int id);
 	public List<PedidoDTO> getSelectedFromComercialWClients(int id);
+	
+	public Pedido getMaxFromComercial(int id);
+	public Pedido getMinFromComercial(int id);
 }

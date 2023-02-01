@@ -83,6 +83,64 @@
 				<input th:value="${cliente.categoria}" value="Cliente" readonly="readonly"/>
 			</div> 
 		</div>
+				
+		<div style="margin-top: 6px;" class="clearfix">
+			<div style="float: left;width: 50%">
+				<label>Email</label>
+			</div>
+			<div style="float: none;width: auto;overflow: hidden;">
+				<input th:value="${cliente.email}" value="email" readonly="readonly"/>
+			</div> 
 		</div>
+		
+				<div class="clearfix">
+			<hr/>
+		</div>
+		
+		<div class="clearfix">
+			<div style="float: left;width: 16%">Id</div>
+			<div style="float: left;width: 16%">Nombre</div>
+			<div style="float: left;width: 16%">Apellido1</div>
+			<div style="float: left;width: 16%">Apellido2</div>
+			<div style="float: left;width: 16%">Comision</div>
+			<div style="float: left;width: auto">Pedidos</div>
+		</div>
+		<div class="clearfix">
+			<hr/>
+		</div>
+
+		<div  th:each="comercial : ${cliente.comercialesAsociados}" style="margin-top: 6px;" class="clearfix">
+			<div style="float: left;width: 16%" th:text="${comercial.id}">0</div>
+			<div style="float: left;width: 16%" th:text="${comercial.nombre}">nombre</div>
+			<div style="float: left;width: 16%" th:text="${comercial.apellido1}">apellido1</div>
+			<div style="float: left;width: 16%" th:text="${comercial.apellido2 ?: '&nbsp;'}">apellido2</div>
+			<div style="float: left;width: 16%" th:text="${comercial.comision}">comision</div>
+			<div style="float: left;width: auto" th:text="${comercial.pedidosRealizados}">pedidos</div>
+		</div>
+		
+		<div class="clearfix">
+			<hr/>
+		</div>
+		<div class="clearfix">
+			<hr/>
+		</div>
+		
+		<div class="clearfix">
+			<div style="float: left;width: 25%">Pedidos Trimestre</div>
+			<div style="float: left;width: 25%">Pedidos Semestre</div>
+			<div style="float: left;width: 25%">Pedidos Año</div>
+			<div style="float: left;width: 25%">Pedidos Lustro</div>
+		</div>
+		<div class="clearfix">
+			<hr/>
+		</div>
+		<div class="clearfix">
+			<div style="float: left;width: 25%" th:text="${cliente.pedidosTrimestre}">0</div>
+			<div style="float: left;width: 25%" th:text="${cliente.pedidosSemestre}">nombre</div>
+			<div style="float: left;width: 25%" th:text="${cliente.pedidosYear}">apellido1</div>
+			<div style="float: left;width: 25%" th:text="${cliente.pedidosLustro}">apellido2</div>
+		</div>
+		</div>
+	
 </body>
 </html>

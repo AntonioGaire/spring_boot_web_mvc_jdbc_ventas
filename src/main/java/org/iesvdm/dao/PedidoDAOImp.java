@@ -84,4 +84,42 @@ public class PedidoDAOImp implements PedidoDAO {
         return listPed;
 	}
 
+	@Override
+	public Pedido getMaxFromComercial(int id) {
+		Pedido ped =  jdbcTemplate
+				.queryForObject("select pedido.* from comercial inner join pedido"
+						+ " on pedido.id_comercial = comercial.id where comercial.id = ? "
+						+ "order by pedido.total desc limit 1;"														
+								, (rs, rowNum) -> new Pedido(rs.getInt("id"),
+            						 	rs.getFloat("total"),
+            						 	rs.getString("fecha"),
+            						 	rs.getInt("id_cliente"),
+            						 	rs.getInt("id_comercial")
+            						 	)
+								, id
+								);
+		
+
+        return ped;
+	}
+
+	@Override
+	public Pedido getMinFromComercial(int id) {
+		Pedido ped =  jdbcTemplate
+				.queryForObject("select pedido.* from comercial inner join pedido"
+						+ " on pedido.id_comercial = comercial.id where comercial.id = ? "
+						+ "order by pedido.total asc limit 1;"														
+								, (rs, rowNum) -> new Pedido(rs.getInt("id"),
+            						 	rs.getFloat("total"),
+            						 	rs.getString("fecha"),
+            						 	rs.getInt("id_cliente"),
+            						 	rs.getInt("id_comercial")
+            						 	)
+								, id
+								);
+		
+
+        return ped;
+	}
+
 }

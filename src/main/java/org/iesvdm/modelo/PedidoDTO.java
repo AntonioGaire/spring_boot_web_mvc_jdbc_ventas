@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 
 public class PedidoDTO extends Pedido{
-	public String nombre_cliente;
+	public String nombre_cliente ;
 
 	public PedidoDTO(int id, float total, String fecha, int id_cliente, int id_comercial, String nombre_cliente) {
 		super(id, total, fecha, id_cliente, id_comercial);

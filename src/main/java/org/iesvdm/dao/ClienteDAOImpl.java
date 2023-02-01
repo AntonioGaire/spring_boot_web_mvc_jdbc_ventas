@@ -4,7 +4,9 @@ import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
 
+import org.iesvdm.DTO.ComercialDTOMS;
 import org.iesvdm.modelo.Cliente;
+import org.iesvdm.modelo.ClienteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -32,8 +34,8 @@ public class ClienteDAOImpl implements ClienteDAO {
 		
 							//Desde java15+ se tiene la triple quote """ para bloques de texto como cadenas.
 		String sqlInsert = """
-							INSERT INTO cliente (nombre, apellido1, apellido2, ciudad, categoría) 
-							VALUES  (     ?,         ?,         ?,       ?,         ?)
+							INSERT INTO cliente (nombre, apellido1, apellido2, ciudad, categoría, email) 
+							VALUES  (     ?,         ?,         ?,       ?,         ?,			?)
 						   """;
 		
 		KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -45,7 +47,8 @@ public class ClienteDAOImpl implements ClienteDAO {
 			ps.setString(idx++, cliente.getApellido1());
 			ps.setString(idx++, cliente.getApellido2());
 			ps.setString(idx++, cliente.getCiudad());
-			ps.setInt(idx, cliente.getCategoria());
+			ps.setInt(idx++, cliente.getCategoria());
+			ps.setString(idx, cliente.getEmail());
 			return ps;
 		},keyHolder);
 		
@@ -76,7 +79,8 @@ public class ClienteDAOImpl implements ClienteDAO {
                 						 	rs.getString("apellido1"),
                 						 	rs.getString("apellido2"),
                 						 	rs.getString("ciudad"),
-                						 	rs.getInt("categoría")
+					 						rs.getInt("categoría"), 
+					 						rs.getString("email") 
                 						 	)
         );
 		
@@ -99,7 +103,8 @@ public class ClienteDAOImpl implements ClienteDAO {
             						 						rs.getString("apellido1"),
             						 						rs.getString("apellido2"),
             						 						rs.getString("ciudad"),
-            						 						rs.getInt("categoría")) 
+            						 						rs.getInt("categoría"), 
+            						 						rs.getString("email")) 
 								, id
 								);
 		
@@ -122,13 +127,15 @@ public class ClienteDAOImpl implements ClienteDAO {
 														apellido1 = ?, 
 														apellido2 = ?,
 														ciudad = ?,
-														categoría = ?  
+														categoría = ?, 
+														email = ?    
 												WHERE id = ?
 										""", cliente.getNombre()
 										, cliente.getApellido1()
 										, cliente.getApellido2()
 										, cliente.getCiudad()
 										, cliente.getCategoria()
+										, cliente.getEmail()
 										, cliente.getId());
 		
 		log.info("Update de Cliente con {} registros actualizados.", rows);
@@ -145,6 +152,63 @@ public class ClienteDAOImpl implements ClienteDAO {
 		
 		log.info("Delete de Cliente con {} registros eliminados.", rows);		
 		
+	}
+
+	@Override
+	public List<ClienteDTO> getfromComerciantebyTotalPedido(int id) {
+		List<ClienteDTO> listCliDTO = jdbcTemplate.query(
+                "select cliente.*, sum(pedido.total) as totalpedido from cliente inner join pedido"
+                + " on cliente.id = pedido.id_cliente where pedido.id_comercial = ?"
+                + " group by cliente.id order by totalpedido desc",
+          
+                (rs, rowNum) -> new ClienteDTO(rs.getInt("id"),
+                						 	rs.getString("nombre"),
+                						 	rs.getString("apellido1"),
+                						 	rs.getString("apellido2"),
+                						 	rs.getString("ciudad"),
+                						 	rs.getInt("categoría"),
+                						 	rs.getString("email"),
+                						 	rs.getFloat("totalpedido")),
+                							id
+                						 	);
+		
+		log.info("Devueltos {} registros.", listCliDTO.size());
+		
+        return listCliDTO;
+        
+	}
+
+	@Override
+	public int getPedidoswTime(int id, int timeframe) {
+
+		int npedidos =  jdbcTemplate
+				.queryForObject("select count(*) as npedidos from pedido inner join cliente on pedido.id_cliente = cliente.id where datediff(curDate(), pedido.fecha)< ? and cliente.id= ?;",													
+							(rs, rowNum) -> rs.getInt("npedidos")
+							,timeframe , id
+							);
+		return npedidos;
+		
+	}
+
+	@Override
+	public List<ComercialDTOMS> getComerciaeslwNPedidos(int id) {
+		
+		List<ComercialDTOMS> listComDTO = jdbcTemplate.query(
+                "select comercial.*, count(comercial.id) as npedidos from comercial inner join pedido"
+                + " on pedido.id_comercial = comercial.id where pedido.id_cliente= ? group by comercial.id;",
+          
+                (rs, rowNum) -> new ComercialDTOMS(rs.getInt("id"),
+                						 	rs.getString("nombre"),
+                						 	rs.getString("apellido1"),
+                						 	rs.getString("apellido2"),
+                						 	rs.getFloat("comisión"),
+                						 	rs.getInt("npedidos")),
+                							id
+                						 	);
+		
+		log.info("Devueltos {} registros.", listComDTO.size());
+		
+        return listComDTO;
 	}
 	
 }

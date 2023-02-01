@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mi error</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
+<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+</head>
+<body>
+	<h1 class="display-1 text-center">ERROR GLOBAL</h1>
+	<div th:text="${traza}" class="text-center">0</div>
+	
+	<div class="bg-danger d-flex justify-content-center align-content-center vh-100">
+							
+	<form action="/comerciales" class="m-2">
+		<input type="submit" class="btn btn-warning" value="Vuelta a comerciales">
+	</form>
+	
+	<form action="/clientes" class="m-2">
+			<input type="submit" class="btn btn-warning " value="Vuelta a clientes">
+	</form>
+	</div>
+</body>
+</html>

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.iesvdm.modelo.Comercial;
+import org.iesvdm.modelo.ComercialDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -110,6 +111,61 @@ public class ComercialDAOImp implements ComercialDAO {
 		
 		log.info("Delete de Comercial con {} registros eliminados.", rows);		
 
+	}
+
+	@Override
+	public List<ComercialDTO> getAllwStats() {
+		List<ComercialDTO> listCom = jdbcTemplate.query(
+                "select comercial.*, sum(pedido.total) as total, avg(pedido.total) as average "
+                + "from comercial inner join pedido on comercial.id = pedido.id_comercial "
+                + "group by comercial.id",
+                (rs, rowNum) -> new ComercialDTO(rs.getInt("id"),
+                						 	rs.getString("nombre"),
+                						 	rs.getString("apellido1"),
+                						 	rs.getString("apellido2"),
+                						 	rs.getFloat("comisión"), 
+                						 	rs.getFloat("total"),
+                						 	rs.getFloat("average")
+                						 	)
+        );
+		
+		log.info("Devueltos {} registros.", listCom.size());
+		
+        return listCom;
+	}
+
+	@Override
+	public Optional<ComercialDTO> findwData(int id) {
+		ComercialDTO com =  jdbcTemplate
+					.queryForObject("select comercial.*, sum(pedido.total) as total, avg(pedido.total) as average "
+						+ "from comercial inner join pedido on comercial.id = pedido.id_comercial"
+						+ " where comercial.id = ? group by comercial.id;",													
+								(rs, rowNum) -> new ComercialDTO(rs.getInt("id"),
+            						 						rs.getString("nombre"),
+            						 						rs.getString("apellido1"),
+            						 						rs.getString("apellido2"),
+            						 						rs.getFloat("comisión"),
+            						 						rs.getFloat("total"),
+            						 						rs.getFloat("average")) 
+								, id
+								);
+		
+		if (com != null) { 
+			return Optional.of(com);}
+		else { 
+			log.info("Comercial no encontrado.");
+			return Optional.empty(); }
+	}
+
+	@Override
+	public int getCountPedidosfCliente(int id) {
+		
+		int npedidos =  jdbcTemplate
+				.queryForObject("select count(*) as npedidos from pedido inner join comercial on pedido.id_comercial = comercial.id where id_cliente= ? ",													
+							(rs, rowNum) -> rs.getInt("npedidos")
+							, id
+							);
+		return npedidos;
 	}
 
 }

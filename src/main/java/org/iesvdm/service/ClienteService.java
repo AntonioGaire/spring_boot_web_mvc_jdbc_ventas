@@ -3,6 +3,7 @@ package org.iesvdm.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.iesvdm.DTO.ComercialDTOMS;
 import org.iesvdm.dao.ClienteDAO;
 import org.iesvdm.modelo.Cliente;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,14 @@ public class ClienteService {
 	
 	public void deleteCliente(Integer id) {
 		clienteDAO.delete(id);
+	}
+	
+	public int getPedidoswTime(int id, int timeframe) {
+		return clienteDAO.getPedidoswTime(id, timeframe);
+	}
+	
+	public List<ComercialDTOMS> getComerciaeslwNPedidos(int id){
+		return clienteDAO.getComerciaeslwNPedidos(id);
 	}
 
 }

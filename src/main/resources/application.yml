@@ -10,3 +10,5 @@ spring:
     password: usuario
     url: jdbc:mysql://localhost:3306/ventas
     username: antoniogaire
+  messages:
+    encoding: iso-8859-1
